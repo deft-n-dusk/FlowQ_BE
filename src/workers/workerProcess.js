@@ -15,10 +15,19 @@ async function runWorker() {
   );
 
   setInterval(async () => {
+    const now = Date.now();
+    
     await redis.hset(`flq:worker:${WORKER_ID}`, {
       status: "active",
-      lastHeartbeat: Date.now(),
+      lastHeartbeat: now,
     });
+
+    for (let i = 0; i < CONCURRENCY; i++) {
+      await redis.hset(`flq:worker:${WORKER_ID}-lane-${i}`, {
+        status: "active",
+        lastHeartbeat: now,
+      });
+    }
   }, 5000);
 
   for (let i = 0; i < CONCURRENCY; i++) {
