@@ -107,4 +107,28 @@ router.get("/:jobId", async (req, res) => {
   }
 });
 
+// DELETE SINGLE JOB
+router.delete("/:jobId", async (req, res) => {
+  try {
+    const deletedJob = await Job.findOneAndDelete({ 
+      jobId: req.params.jobId 
+    });
+
+    if (!deletedJob) {
+      return res.status(404).json({ 
+        message: "Job not found" 
+      });
+    }
+
+    return res.json({ 
+      success: true, 
+      message: "Job deleted successfully" 
+    });
+  } catch (err) {
+    return res.status(500).json({ 
+      message: err.message 
+    });
+  }
+});
+
 module.exports = router;
